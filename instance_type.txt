@@ -1,0 +1,5 @@
+r3.large
+m3.medium
+t2.medium
+c5.large
+h1.2xlarge
