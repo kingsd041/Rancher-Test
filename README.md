@@ -3,16 +3,43 @@ Following is the list of tests to be executed on a RancherOS release candidate.
 ### Installing RancherOS
 
 * Using VirtualBox, install to Disk (ros install) and run list of sample commands
+> Note: Need to add disk and network card in advance before operation
+```
+#cloud-config
+ssh_authorized_keys:
+  - ssh-rsa AAA...
+```
+
 * Install using docker-machine
+
+`docker-machine create -d virtualbox --virtualbox-memory "2048" --virtualbox-boot2docker-url rancheros-v130-rc1.iso <machine>`
+
   * `eval $(docker-machine env <machine>)`
   * Check `docker images`: Pull an image on your local host. SSH into the machine to confirm the image is also in the machine. 
 * Install using Amazon AMI for every region(PV/HVM) (`make test` in the `rancher/os-packer` repo will create a vm for each AMI, run all of https://github.com/rancher/os-packer/blob/master/scripts/test.sh and then remove the vm)
  * Test various instance types. (ie. R3, m3, tX, CPU, GPU, etc) Particularly with HVM
+> See also aws-run-instace.sh
+> Instance type details:
+>> t2.medium 2 4
+>> r3.large 2 15
+>> m3.medium 1 3.75
+>> h1.2xlarge 8 32
+>> c5.large 2 4
    * Log into RancherOS using SSH from terminal
  * Test passing cloud-config information (debug, ssh key, disabling services)
     * Pass using text 
     * Pass using file
+```  
+# cat cloud-config.yml
+rancher:
+  debug: true
+#cloud-config
+ssh_authorized_keys:
+  - ssh-rsa AAA...
+```
+
  * Check version
+ `ros -v`
 * GCE Image
   * Test different cloud-config (try turning on/off debug)
   * Test SSH keys from Meta-data (Project level)
@@ -22,6 +49,8 @@ Following is the list of tests to be executed on a RancherOS release candidate.
 ### Upgrading
 * Using old version: 
   * Upgrade/downgrade
+>  NOTE: Run container and switch console
+> `docker run -itd --name=nginx1 --restart=unless-stopped -p 8000:80 nginx`
 * Upgrade in persistent console, check old console
 * Upgrade in persistent console with `--upgrade-console`, check new console
 * Within Rancher
